@@ -18,7 +18,10 @@ $(() => {
   window.propertyListings.clearListings = clearListings;
 
   function addProperties(properties, isReservation = false) {
-    clearListings();
+    // if it's a reservation, we don't want to clear the listings a second time in the addProperties function call
+    if (!isReservation) {
+      clearListings();
+    }
     // check for user login
     getMyDetails()
     .then()
@@ -27,6 +30,21 @@ $(() => {
       const listing = propertyListing.createListing(property, isReservation);
       addListing(listing);
     }
+    if (isReservation) {
+      $('.update-button').on('click', function() {
+        const idData = $(this).attr('id').substring(16);
+        getIndividualReservation(idData).then(data => {
+          views_manager.show("updateReservation", data);       
+        });
+      })
+      $('.delete-button').on('click', function() {
+        const idData = $(this).attr('id').substring(16);
+        console.log(`idData: ${idData}`)
+        deleteReservation(idData)
+        .then(() => console.log('Success!'))
+        .catch(err => console.error(err));        
+      })
+    } 
   }
   window.propertyListings.addProperties = addProperties;
 });
