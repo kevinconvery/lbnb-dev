@@ -1,3 +1,12 @@
+-- Schema solution file for Lighthouse DDL activity:
+
+-- Set up project directory and create a schema file within the migrations subdirectory
+
+-- Use appropriate data fields to define database schema (varchar, integer, date, etc.)
+
+-- Ensure that appropriate tables are referenced upon table deletion and creation
+
+
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS properties CASCADE;
 DROP TABLE IF EXISTS reservations CASCADE;
