@@ -4,17 +4,20 @@ $(() => {
 
   window.views_manager = {};
 
-  // add this optional field to send over the id field to add a new reservation!
+  // the optional data field is necessary to send over the id for create/update views
   window.views_manager.show = function(item, data = '') {
     $newPropertyForm.detach();
     $newReservationForm.detach();
+    $newReviewForm.detach()
     $updateReservationForm.detach();
     $propertyListings.detach();
+    $propertyReviews.detach();
     $searchPropertyForm.detach();
     $logInForm.detach();
     $signUpForm.detach();
 
-    // dataTag, for use in the create and update views:
+    // dataTag, for use in the create and update views. Datatags allow for the data to be reused much 
+    // easier in the forms itself by the associated jQuery code in the forms
     let datatag = "";
 
     switch (item) {
@@ -55,7 +58,15 @@ $(() => {
         $(dataTag).appendTo("#datatag");
         $(errorMessage).appendTo('#error-message');
         break;
-      case 'deleteReservation':
+      case 'newReview':
+        dataTag = `<h4>${data}</h4>`;
+        $newReviewForm.appendTo($main);
+        $(dataTag).appendTo("#datatag");
+        break;
+      case 'showReviews':
+        getReviewsByProperty(data)
+        .then(reviews => propertyReviews.addReviews(reviews))
+        $propertyReviews.appendTo($main);
         break;
       case 'searchProperty':
         $searchPropertyForm.appendTo($main);
@@ -73,7 +84,6 @@ $(() => {
           $error.remove();
           views_manager.show('listings');
         }, 2000);
-        
         break;
       }
     }
