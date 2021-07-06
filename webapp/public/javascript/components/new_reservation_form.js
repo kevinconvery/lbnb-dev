@@ -1,7 +1,7 @@
 $(() => {
 
   
-
+  // Form for registering new bookings:
   const $newReservationForm = $(`
   <form action="/api/reservations" method="post" id="new-reservation-form" class="new-reservation-form">
       <h3 id="new-reservation-header">Start Date</h3>
@@ -164,8 +164,8 @@ $(() => {
   $newReservationForm.on('submit', function (event) {
     event.preventDefault();
     views_manager.show('none');
+    // serialize the array, then build the start and end dates to send to the database.
     const formArray = $(this).serializeArray();
-    console.log(formArray);
     const startDate = `${formArray[2].value}-${formArray[1].value}-${formArray[0].value}`
     const endDate = `${formArray[5].value}-${formArray[4].value}-${formArray[3].value}`
     const propertyId = $(this).find("#datatag h4").text();
