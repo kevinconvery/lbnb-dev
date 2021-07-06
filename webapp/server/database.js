@@ -13,6 +13,11 @@ const users = require('./json/users.json');
 
 /// Users
 
+// Helps meet the LighthouseBNB Users objective
+
+// Update the provided server-side JavaScript functions getUserWithEmail, getUserWithId 
+// add addUser to use the database rather than the in-memory users object provided
+
 /**
  * Get a single user from the database given their email.
  * @param {String} email The email of the user.
@@ -61,6 +66,17 @@ exports.addUser = addUser;
 
 /// Reservations
 
+// Involves the following objectives:
+// LighthouseBNB Reservations
+
+// Update the provided server-side JavaScript function getAllReservations
+// to use the database
+
+// Modify or Delete A Reservation
+
+// Add appropriate API routes and queries to handle modify and delete requests
+
+
 /**
  * Get all reservations for a single user.
  * @param {string} guest_id The id of the user.
@@ -84,7 +100,7 @@ const getFulfilledReservations = function(guest_id, limit = 10) {
 exports.getFulfilledReservations = getFulfilledReservations;
 
 //
-//  Gets an individual 
+//  Gets an individual reservation
 //
 const getIndividualReservation = function(reservationId) {
   const queryString = `SELECT * FROM reservations WHERE reservations.id = $1`;
@@ -171,7 +187,15 @@ const deleteReservation = function(reservationId) {
 
 exports.deleteReservation = deleteReservation;
 
-/// Properties
+// Properties
+
+// Relates to Lighthouse Web Boilerplate objective:
+// Test connection to database by writing a JavaScript function (getAllProperties)
+// to get properties from the database
+
+// Also relates to LighthouseBNB Properties objective:
+// Modify the getAllProperties function to include filters provided through an options object
+// passed into the function to provide dynamic property filtering capabilities to the application
 
 /**
  * Get all properties.
@@ -179,16 +203,10 @@ exports.deleteReservation = deleteReservation;
  * @param {*} limit The number of results to return.
  * @return {Promise<[{}]>}  A promise to the properties.
  */
-/**
- * Get all properties.
- * @param {{}} options An object containing query options.
- * @param {*} limit The number of results to return.
- * @return {Promise<[{}]>}  A promise to the properties.
- */
- const getAllProperties = function(options, limit = 10) {
+const getAllProperties = function(options, limit = 10) {
   const queryParams = [];
   let queryString = `
-    SELECT properties.*, avg(property_reviews.rating) as average_rating
+    SELECT properties.*, avg(property_reviews.rating) as average_rating, count(property_reviews.rating) as review_count
     FROM properties
     JOIN property_reviews ON properties.id = property_id
     WHERE 1=1
@@ -235,8 +253,12 @@ exports.getAllProperties = getAllProperties;
  * @param {{}} property An object containing all of the property details.
  * @return {Promise<{}>} A promise to the property.
  */
- const addProperty = function(property) {
-  console.log(property);
+
+// Relates to LighthouseBNB Add Property objective
+// Update the provided addProperty function to insert a new property into the properties table in 
+// the database.
+
+const addProperty = function(property) {
   return pool.query(`
   INSERT INTO properties(owner_id, title, description, thumbnail_photo_url, cover_photo_url, cost_per_night, street, city, province, post_code, country, parking_spaces, number_of_bathrooms, number_of_bedrooms)
   VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
@@ -246,3 +268,39 @@ exports.getAllProperties = getAllProperties;
 }
 exports.addProperty = addProperty;
 
+/*
+ *  get reviews by property
+ */
+const getReviewsByProperty = function(propertyId) {
+  const queryString = `
+    SELECT property_reviews.id, property_reviews.rating AS review_rating, property_reviews.message AS review_text, 
+    users.name, properties.title AS property_title, reservations.start_date, reservations.end_date
+    FROM property_reviews
+    JOIN reservations ON reservations.id = property_reviews.reservation_id  
+    JOIN properties ON properties.id = property_reviews.property_id
+    JOIN users ON users.id = property_reviews.guest_id
+    WHERE properties.id = $1
+    ORDER BY reservations.start_date ASC;
+  `
+  const queryParams = [propertyId];
+  return pool.query(queryString, queryParams).then(res => res.rows);
+}
+
+exports.getReviewsByProperty = getReviewsByProperty;
+
+// addReview
+// Adds a review to the database.
+// Used in the Add Reviews for Reservation Module
+// Adds the database query required to add the review.
+
+const addReview = function(review) {
+  const queryString = `
+    INSERT INTO property_reviews (guest_id, property_id, reservation_id, rating, message) 
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *;
+  `;
+  const queryParams = [review.guest_id, review.property_id, review.id, parseInt(review.rating), review.message];
+  return pool.query(queryString, queryParams).then(res => res.rows);
+}
+
+exports.addReview = addReview;
