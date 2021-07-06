@@ -1,3 +1,6 @@
+// This is the form used in updating reservation functionality
+// Used in the Modify or Delete a Reservation functionality.
+
 $(() => {
   const $updateReservationForm = $(`
   <h4>Update Reservation</h4>
@@ -212,6 +215,7 @@ $(() => {
       }
     }
 
+    // if all is good, we'll proceed with the update:
     if ((startDate || endDate) && !errorMessage) {
       const reservationId = $(this).find("#datatag-reservation-id").text();
       const dataObj = { start_date: startDate, end_date: endDate, reservation_id: reservationId };
@@ -236,7 +240,7 @@ $(() => {
       })
     } else {
       console.log(errorMessage);
-      // we can redisplay the form by pulling the information in the datatag!
+      // use the datatag information to re-render the form with the error:
       const dataObj = {
         id: $(this).find('#datatag-reservation-id').text(),
         start_date: $(this).find('#datatag-start-date').text(),
