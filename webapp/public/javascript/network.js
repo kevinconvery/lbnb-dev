@@ -37,6 +37,8 @@ function getAllListings(params) {
   });
 }
 
+// Separated into fulfilled and upcoming to implement reservation functionality
+// Used in Make a Reservation and Modify and Delete a Reservation
 function getFulfilledReservations() {
   let url = "/api/reservations";
   return $.ajax({
@@ -75,6 +77,10 @@ const submitReservation = function(data) {
   })
 }
 
+// Below, the update and delete reservation AJAX functionality used in 
+// the Modify and Delete a Reservation requirement
+
+// Update an existing reservation
 const updateReservation = function(data) {
   return $.ajax({
     method: "POST",
@@ -83,9 +89,29 @@ const updateReservation = function(data) {
   })
 }
 
+// Delete a reservation
 const deleteReservation = function(id) {
   return $.ajax({
     method: "DELETE",
     url: `/api/reservations/${id}`
+  })
+}
+
+// below functions used in the Add Reviews for Reservation requirement
+
+// getting all reviews by property:
+const getReviewsByProperty = function(propertyId) {
+  const url = `api/reviews/${propertyId}`;
+  return $.ajax({
+    url,
+  });
+}
+
+// submits a new review
+const submitReview = function(data) {
+  return $.ajax({
+    method: "POST",
+    url: `api/reviews/${data.reservationId}`,
+    data,
   })
 }
