@@ -39,12 +39,24 @@ $(() => {
       })
       $('.delete-button').on('click', function() {
         const idData = $(this).attr('id').substring(16);
-        console.log(`idData: ${idData}`)
         deleteReservation(idData)
         .then(() => console.log('Success!'))
         .catch(err => console.error(err));        
       })
-    } 
+      $('.add-review-button').on('click', function() {
+        const idData = $(this).attr('id').substring(11);
+        views_manager.show("newReview", idData);
+      })
+    } else {
+      $('.reserve-button').on('click', function() {
+        const idData = $(this).attr('id').substring(17);
+        views_manager.show('newReservation', idData);
+      })
+      $('.review_details').on('click', function() {
+        const idData = $(this).attr('id').substring(15);
+        views_manager.show('showReviews', idData);
+      })
+    }
   }
   window.propertyListings.addProperties = addProperties;
 });
